@@ -1,4 +1,4 @@
-# Autobookwork, a tool to automatically log Sparx Bookwork codes
+# Autobookwork, a tool to automatically log SPARX Bookwork codes
 
 ## How to install:
 #### Chapter 1: Installing all dependencies
@@ -28,9 +28,9 @@ yes
 true
 ```
 5. If you want your settings to be re-entered every time you run the script, then make sure to disable saving settings.
-(Quick FAQ: The password input is stil typing, even though it may not look like it. It just flushes the buffer (empties the char) to make it invisible. Once you are done entering your password, and press enter, you will see a √ to determine that your input was recorded.
+- (Quick FAQ: The password input is still typing, even though it may not look like it. It just flushes the buffer (empties the char) to make it invisible. Once you are done entering your password, and press enter, you will see a ✓ to determine that your input was recorded.
 #### Chapter 3: Using the Script:
-Any Sparx answers will be both logged to the console and logged to a .log file with the date for when it was created
+Any Sparx answers will be both logged to the console and logged to a .log file with the date for when it was created. <br>
 If you type a different answer, the answer will be logged again.
 
 It will automatically press the "Continue" or "Second Chance" button if it detects it.
