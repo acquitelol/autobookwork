@@ -85,8 +85,8 @@ class logging:
             return onError(main, f"{colors.WARNING}Failed to create a new log file")
 
 class local:
-    def __init__(self, type, fp):
-        self.type = type
+    def __init__(self, typeOf, fp):
+        self.type = typeOf
         self.fp = fp
 
     def saveSettings(self):
