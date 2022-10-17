@@ -139,7 +139,7 @@ class local:
 
     def loadDriverLink(self):
         try:
-            with open('Local/personal.json') as json_file:
+            with open('Local/info.json') as json_file:
                 data = json.load(json_file)
                 print(f"{colors.HEADER}{colors.BOLD}[{self.type}] {colors.ENDC}{colors.OKCYAN}Loading local configurations. {colors.OKGREEN}This may take some time...")
                 info.URL = data['config'][0]['URL']
