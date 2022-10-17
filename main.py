@@ -1,4 +1,5 @@
 # main imports from modules and dependencies
+from enum import auto
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -6,7 +7,7 @@ from selenium.webdriver.common.by import By
 from datetime import datetime
 from Acqu_Dependencies.acqu_pass import input_password
 from Acqu_Dependencies.acqu_format import formatted_log
-import time, json, re
+import time, json, re, os
 
 # used globally around the script for different items, set in the "local" class
 class info:
@@ -17,7 +18,8 @@ class info:
     URL = ""
 
     FILE_NAME = datetime.now().strftime("%d-%m-%Y-%H-%M-%S") # the current date formatted
-    FILE_PARAM = f"Logs/{FILE_NAME}.log" # the output location
+    FILE_DIR = f'Logs/{FILE_NAME}'
+    FILE_PARAM = f"{FILE_DIR}/{FILE_NAME}.log" # the output location
     LAST_MESSAGE = ""
     IS_OPEN = True
     AUTO_CONTINUE = False
@@ -59,6 +61,7 @@ class logging:
 
     def create_log(self):
         try:
+            os.mkdir(info.FILE_DIR)
             log_file = open(self.fp, "a") # appends to a file
             log_file.write(formatted_log( 
                 info.FILE_NAME, 
@@ -136,7 +139,7 @@ class local:
 
     def loadDriverLink(self):
         try:
-            with open('Local/info.json') as json_file:
+            with open('Local/personal.json') as json_file:
                 data = json.load(json_file)
                 print(f"{colors.HEADER}{colors.BOLD}[{self.type}] {colors.ENDC}{colors.OKCYAN}Loading local configurations. {colors.OKGREEN}This may take some time...")
                 info.URL = data['config'][0]['URL']
@@ -182,7 +185,7 @@ def main():
         f"{colors.HEADER}{colors.BOLD}[Main] {colors.ENDC}{colors.OKCYAN}Chrome Version: {colors.OKBLUE}{str(DRIVER.capabilities['browserVersion'])}",
         info.FILE_PARAM
     ).log()
-
+    
     try:
         mainLoop(DRIVER)
     except:
@@ -200,6 +203,19 @@ def mainLoop(driver):
             try:
                 BOOKWORK = driver.find_element(By.CLASS_NAME, 'bookwork-code')
                 SUBMIT_ELEM = driver.find_element(By.ID, "skill-delivery-submit-button")
+
+                def autoContinue(if_continue):
+                    if if_continue:
+                        driver.execute_script("""
+                            let both = document.getElementsByClassName('button-text')
+
+                            for (var i = 0; i < both.length; i++) {
+                                if (both.item(i).innerText=="Continue" || both.item(i).innerText=="Second chance") {
+                                    both.item(i).parentElement.parentElement.click()
+                                }
+                            }
+                        """)
+
                 driver.execute_script("""
                     var ele = arguments[0]; 
                     ele.addEventListener('click', () => {
@@ -211,42 +227,23 @@ def mainLoop(driver):
                         }
                     });
                 """, SUBMIT_ELEM)
-                try:
-                    numberInput = driver.find_element(By.CLASS_NAME, 'number-input')
-
-                    value = numberInput.get_attribute("value")
-                    if value != "" and SUBMIT_ELEM.get_attribute("automationTrack"):
+                    
+                try:  
+                    if SUBMIT_ELEM.get_attribute("automationTrack"):
+                        answer = driver.find_element(By.CLASS_NAME, "skill-delivery-view")
+                        bookwork = BOOKWORK.text.split(': ', 1)[1]
+                        answer.screenshot(f'./Logs/{info.FILE_NAME}/{bookwork}.png')
                         logging(
                             None,
-                            f"{colors.HEADER}{colors.BOLD}[Bookwork] {colors.ENDC}{colors.HEADER}{BOOKWORK.text.split(': ', 1)[1]} {colors.OKBLUE}[Answer] {colors.OKCYAN}{value}", 
+                            f"{colors.HEADER}{colors.BOLD}[Bookwork] {colors.ENDC}{colors.HEADER}{bookwork} {colors.OKBLUE}Saved Successfully at {colors.OKCYAN}./Logs/{bookwork}", 
                             info.FILE_PARAM
                         ).log()
-
+                        time.sleep(1)
                 except:
-                    "acquite sucks"
-                try:
-                    selected = driver.find_element(By.CLASS_NAME, 'selected')
-
-                    if selected.text != "" and not "answer" in selected.text and SUBMIT_ELEM.get_attribute("automationTrack"):
-                        logging(
-                            None,
-                            f"{colors.HEADER}{colors.BOLD}[Bookwork] {colors.ENDC}{colors.HEADER}{BOOKWORK.text.split(': ', 1)[1]} {colors.OKBLUE}[Answer] {colors.OKCYAN}{selected.text}", 
-                            info.FILE_PARAM
-                        ).log()
-                except:
-                    if info.AUTO_CONTINUE:
-                        driver.execute_script("""
-                            let both = document.getElementsByClassName('button-text')
-
-                            for (var i = 0; i < both.length; i++) {
-                                if (both.item(i).innerText=="Continue" || both.item(i).innerText=="Second chance") {
-                                    both.item(i).parentElement.parentElement.click()
-                                }
-                            }
-                        """)
-
+                    autoContinue(info.AUTO_CONTINUE)
+                
             except:
-                "acquite sucks"
+                "acquite is a girl"
 
 
 if __name__ == '__main__':
