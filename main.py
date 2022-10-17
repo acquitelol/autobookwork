@@ -235,7 +235,7 @@ def mainLoop(driver):
                         answer.screenshot(f'./Logs/{info.FILE_NAME}/{bookwork}.png')
                         logging(
                             None,
-                            f"{colors.HEADER}{colors.BOLD}[Bookwork] {colors.ENDC}{colors.HEADER}{bookwork} {colors.OKBLUE}Saved Successfully at {colors.OKCYAN}./Logs/{bookwork}", 
+                            f"{colors.HEADER}{colors.BOLD}[Bookwork] {colors.ENDC}{colors.HEADER}{bookwork} {colors.OKBLUE}Saved Successfully at {colors.OKCYAN}{info.FILE_DIR}/{bookwork}", 
                             info.FILE_PARAM
                         ).log()
                         time.sleep(1)
